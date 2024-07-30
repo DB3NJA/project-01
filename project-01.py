@@ -1,67 +1,83 @@
-print("Hola, Bienvenido al Proyecto N°1 de DB3NJA")
-
-Python
+import os
+os.system("cls")
 import tkinter as tk
-
 def cargar_tareas():
-    # Leer el archivo data.txt y devolver la lista de tareas
-    pass
+    """Lee el archivo data.txt y devuelve una lista de tareas."""
+    try:
+        with open("data.txt", "r") as archivo:
+            return archivo.readlines()
+    except FileNotFoundError:
+        return []
 
 def guardar_tareas(tareas):
-    # Escribir la lista de tareas en el archivo data.txt
-    pass
+    """Escribe la lista de tareas en el archivo data.txt."""
+    with open("data.txt", "w") as archivo:
+        for tarea in tareas:
+            archivo.write(tarea + "\n")
 
-def agregar_tarea(tarea):
-    # Agregar una nueva tarea a la lista y guardarla en el archivo
-    pass
+def agregar_tarea():
+    """Agrega una nueva tarea a la lista y actualiza la interfaz."""
+    nueva_tarea = entrada_tarea.get()
+    if nueva_tarea:
+        tareas.append(nueva_tarea)
+        guardar_tareas(tareas)
+        mostrar_lista(tareas)
+        entrada_tarea.delete(0, tk.END)
 
-def eliminar_tarea(indice):
-    # Eliminar una tarea de la lista por su índice y guardarla en el archivo
-    pass
+def eliminar_tarea():
+    """Elimina la tarea seleccionada de la lista."""
+    indice = lista_tareas.curselection()
+    if indice:
+        indice = indice[0]
+        del tareas[indice]
+        guardar_tareas(tareas)
+        mostrar_lista(tareas)
 
-def marcar_completada(indice):
-    # Marcar una tarea como completada en la lista y guardarla en el archivo
-    pass
+def marcar_completada():
+    """Marca la tarea seleccionada como completada."""
+    # Implementa la lógica para marcar tareas como completadas
+    # Por ejemplo, puedes agregar un prefijo "*" a las tareas completadas
+    indice = lista_tareas.curselection()
+    if indice:
+        indice = indice[0]
+        tareas[indice] = f"* {tareas[indice]}"
+        guardar_tareas(tareas)
+        mostrar_lista(tareas)
 
 def mostrar_lista(tareas):
-    # Mostrar la lista de tareas pendientes en la interfaz gráfica
-    pass
+    """Muestra la lista de tareas en la interfaz."""
+    lista_tareas.delete(0, tk.END)
+    for tarea in tareas:
+        lista_tareas.insert(tk.END, tarea)
 
-def obtener_accion():
-    # Solicitar al usuario una acción (agregar, eliminar, marcar como completada)
-    pass
+# Cargar las tareas al iniciar la aplicación
+tareas = cargar_tareas()
 
-def main():
-    # Cargar la lista de tareas al iniciar la aplicación
-    tareas = cargar_tareas()
+# Crear la interfaz gráfica
+ventana = tk.Tk()
+ventana.title("Lista de Tareas")
 
-    # Crear la interfaz gráfica y mostrar la lista de tareas
-    ventana = tk.Tk()
-    mostrar_lista(tareas)
+# Lista de tareas
+lista_tareas = tk.Listbox(ventana)
+lista_tareas.pack()
 
-    # Bucle principal
-    while True:
-        accion = obtener_accion()
+# Campo de entrada para la nueva tarea
+entrada_tarea = tk.Entry(ventana)
+entrada_tarea.pack()
 
-        if accion == "agregar":
-            nueva_tarea = obtener_nueva_tarea()
-            agregar_tarea(nueva_tarea)
-            mostrar_lista(tareas)
-        elif accion == "eliminar":
-            indice = obtener_indice_eliminacion()
-            eliminar_tarea(indice)
-            mostrar_lista(tareas)
-        elif accion == "completar":
-            indice = obtener_indice_completar()
-            marcar_completada(indice)
-            mostrar_lista(tareas)
-        elif accion == "salir":
-            break
+# Botón para agregar la tarea
+boton_agregar = tk.Button(ventana, text="Agregar Tarea", command=agregar_tarea)
+boton_agregar.pack()
 
-    # Guardar la lista de tareas al cerrar la aplicación
-    guardar_tareas(tareas)
+# Botón para eliminar la tarea
+boton_eliminar = tk.Button(ventana, text="Eliminar Tarea", command=eliminar_tarea)
+boton_eliminar.pack()
 
-    ventana.mainloop()
+# Botón para marcar como completada
+boton_completar = tk.Button(ventana, text="Marcar como Completada", command=marcar_completada)
+boton_completar.pack()
 
-if __name__ == "__main__":
-    main()
+# Mostrar la lista inicial
+mostrar_lista(tareas)
+
+ventana.mainloop()
